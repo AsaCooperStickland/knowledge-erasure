@@ -1,3 +1,8 @@
+def llama_chat_prompt(prompt, system_message=None):
+    if system_message == None:
+        return f"[INST]\n{prompt} [/INST]"
+    return f"[INST]\n<<SYS>>\n{system_message}\n<</SYS>>\n{prompt} [/INST]"
+
 def test_answer_mmlu_(pred_str, ans):
     pattern = 'the answer is ('
     pred = pred_str.lower().split(pattern)

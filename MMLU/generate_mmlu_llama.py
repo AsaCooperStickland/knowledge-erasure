@@ -12,7 +12,7 @@ from datasets import load_dataset
 from transformers import LlamaForCausalLM, LlamaTokenizer, AutoTokenizer, AutoModel, AutoModelForCausalLM
 import tensor_parallel as tp
 import accelerate
-
+from utils import llama_chat_prompt
 
 TASKS = [
         'abstract_algebra',
@@ -178,7 +178,10 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
             k = args.ntrain
             prompt_end = format_example(test_df, i, include_answer=False)
             train_prompt = gen_prompt(dev_df, task, k)
-            prompt = train_prompt + prompt_end
+            if args.use_chat_format and not args.generate_prompt_only:
+                prompt = llama_chat_prompt(train_prompt + prompt_end)
+            else:
+                prompt = train_prompt + prompt_end
             while len(tokenizer.tokenize(prompt)) + 1> 2048: # bos token
                 prompt_split = prompt.split("\n\n")
                 prompt_split.pop(1)
@@ -187,8 +190,9 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
             records.append({'prompt':prompt, 'answer':label})
 
         if args.generate_prompt_only:
-            json.dump([record['prompt'] for record in records], open(os.path.join(args.prompt_path,
-                                                                                  f"prompt_{task}.json"), "w"))
+            format_prompt = [record['prompt'] for record in records]
+            format_prompt = [{'instruction': prompt, 'input': '', 'output': ''} for prompt in format_prompt]
+            json.dump(format_prompt, open(os.path.join(args.prompt_path, f"prompt_{task}.json"), "w"))
         else:
             pred_answers = batch_infer(model, tokenizer, [record['prompt'] for record in records])
             run_results[task] = pred_answers
@@ -210,6 +214,7 @@ if __name__ == "__main__":
     parser.add_argument('--prompt_path', type=str, default='prompt/')
     parser.add_argument('--ntrain', type=int, default=5)
     parser.add_argument('--generate_prompt_only', action='store_true')
+    parser.add_argument('--use_chat_format', action='store_true')
     args = parser.parse_args()
     
     main(args.ckpt_dir, args.param_size, args.model_type)
