@@ -1,4 +1,5 @@
 import json
+import random
 import os
 import time 
 from tqdm import tqdm
@@ -14,17 +15,23 @@ import tensor_parallel as tp
 import accelerate
 from utils import llama_chat_prompt
 
-TASKS = [
+BIOLOGY_TASKS = [
+        'clinical_knowledge',
+        'college_medicine',
+        'college_biology',
+        'high_school_biology',
+        'medical_genetics',
+        'professional_medicine',
+        'virology',
+]
+OTHER_TASKS = [
         'abstract_algebra',
         'anatomy',
         'astronomy',
         'business_ethics',
-        'clinical_knowledge',
-        'college_biology',
         'college_chemistry',
         'college_computer_science',
         'college_mathematics',
-        'college_medicine',
         'college_physics',
         'computer_security',
         'conceptual_physics',
@@ -33,7 +40,6 @@ TASKS = [
         'elementary_mathematics',
         'formal_logic',
         'global_facts',
-        'high_school_biology',
         'high_school_chemistry',
         'high_school_computer_science',
         'high_school_european_history',
@@ -55,7 +61,6 @@ TASKS = [
         'machine_learning',
         'management',
         'marketing',
-        'medical_genetics',
         'miscellaneous',
         'moral_disputes',
         'moral_scenarios',
@@ -64,14 +69,13 @@ TASKS = [
         'prehistory',
         'professional_accounting',
         'professional_law',
-        'professional_medicine',
         'professional_psychology',
         'public_relations',
         'security_studies', 
         'sociology',
         'us_foreign_policy',
-        'virology',
         'world_religions']
+TASKS = BIOLOGY_TASKS + OTHER_TASKS
 
 choices = ["A", "B", "C", "D"]
 
@@ -82,22 +86,27 @@ def format_subject(subject):
         s += " " + entry
     return s
 
-def format_example(df, idx, include_answer=True):
+def format_example(df, idx, include_answer=True, incorrect_answer=False):
     prompt = df.iloc[idx, 0]
     k = df.shape[1] - 2
     for j in range(k):
         prompt += "\n{}. {}".format(choices[j], df.iloc[idx, j+1])
     prompt += "\nAnswer:"
     if include_answer:
-        prompt += " {}\n\n".format(df.iloc[idx, k + 1])
+        if incorrect_answer:
+            # pick a random number between 0 and k-1
+            k_incorrect = random.randint(0, k-1)
+            prompt += " {}\n\n".format(df.iloc[idx, k_incorrect + 1])
+        else:
+            prompt += " {}\n\n".format(df.iloc[idx, k + 1])
     return prompt
 
-def gen_prompt(train_df, subject, k=-1):
+def gen_prompt(train_df, subject, k=-1, incorrect_answers=False):
     prompt = "The following are multiple choice questions (with answers) about {}.\n\n".format(format_subject(subject))
     if k == -1:
         k = train_df.shape[0]
     for i in range(k):
-        prompt += format_example(train_df, i)
+        prompt += format_example(train_df, i, incorrect_answer=incorrect_answers)
     return prompt
 
 
@@ -158,8 +167,12 @@ def batch_infer(model, tokenizer, prompts):
 def main(ckpt_dir: str, param_size: str, model_type: str):
     
     run_results = {}
-    output_breakpoint_name = 'run_breakpoint_%s_%s.json' % (model_type, param_size)
-    output_filename = 'run_results_%s_%s.json' % (model_type, param_size)
+    if args.incorrect_answers:
+        output_breakpoint_name = 'run_breakpoint_%s_%s_incorrect_prompt.json' % (model_type, param_size)
+        output_filename = 'run_results_%s_%s_incorrect_prompt.json' % (model_type, param_size)
+    else:
+        output_breakpoint_name = 'run_breakpoint_%s_%s.json' % (model_type, param_size)
+        output_filename = 'run_results_%s_%s.json' % (model_type, param_size)
     if os.path.isfile(output_breakpoint_name):
         run_results = json.load(open(output_breakpoint_name))
     
@@ -176,7 +189,7 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
         for i in range(test_df.shape[0]):
             # get prompt and make sure it fits
             k = args.ntrain
-            prompt_end = format_example(test_df, i, include_answer=False)
+            prompt_end = format_example(test_df, i, include_answer=False, incorrect_answers=args.incorrect_answers)
             train_prompt = gen_prompt(dev_df, task, k)
             if args.use_chat_format and not args.generate_prompt_only:
                 prompt = llama_chat_prompt(train_prompt + prompt_end)
@@ -213,6 +226,7 @@ if __name__ == "__main__":
     parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--prompt_path', type=str, default='prompt/')
     parser.add_argument('--ntrain', type=int, default=5)
+    parser.add_argument('--incorrect_answers', action='store_true')
     parser.add_argument('--generate_prompt_only', action='store_true')
     parser.add_argument('--use_chat_format', action='store_true')
     args = parser.parse_args()
