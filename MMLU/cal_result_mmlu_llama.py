@@ -130,17 +130,20 @@ def main(param_size: str, model_type: str):
         )
 
     run_results_all = []
+    existing_file_names = []
     for file_name in [output_filename, incorrect_filename, custom_filename]:
         if os.path.exists(file_name):
+            existing_file_names.append(file_name)
             run_results_all.append(json.load(open(file_name, "r")))
 
     for file_name, run_results in zip(
-        [output_filename, incorrect_filename, custom_filename], run_results_all
+        existing_file_names, run_results_all
     ):
         start_time = time.time()
         print("Loading model results from %s ..." % file_name)
         for task in BIOLOGY_TASKS + OTHER_TASKS:
-            print("Calculating %s ..." % task)
+            if args.verbose:
+                print("Calculating %s ..." % task)
             records = []
             test_df = pd.read_csv(
                 os.path.join(args.data_dir, "test", task + "_test.csv"), header=None
@@ -150,12 +153,11 @@ def main(param_size: str, model_type: str):
                 records.append({"answer": label})
 
             gold_answers = [record["answer"] for record in records]
-            run_results[task] = {
-                "pred_answers": run_results[task],
-                "gold_answers": gold_answers,
-            }
+            if "pred_answers" not in run_results[task]:
+                run_results[task]["pred_answers"] = run_results[task]
+            run_results[task]["gold_answers"] = gold_answers
 
-        run_results["accuracies"] = compute_metric(run_results)
+        run_results["accuracies"] = compute_metric(run_results, verbose=args.verbose)
         json.dump(run_results, open(file_name, "w"))
     end_time = time.time()
     print("total run time %.2f" % (end_time - start_time))
@@ -168,6 +170,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_dir", type=str, default="data/")
     parser.add_argument("--raw_output_path", type=str, default=None)
     parser.add_argument("--ntrain", type=int, default=5)
+    parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
     main(args.param_size, args.model_type)

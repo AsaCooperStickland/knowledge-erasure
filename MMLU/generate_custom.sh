@@ -5,6 +5,6 @@ N_EXAMPLE=5
 
 python generate_mmlu_llama.py --ckpt_dir ${MODEL} \
                               --param_size ${MODEL_SIZE} \
-			      --incorrect_answers \
+			      --custom_prompt \
                               --model_type llama \
                               --ntrain ${N_EXAMPLE}
