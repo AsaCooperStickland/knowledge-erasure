@@ -1,0 +1,78 @@
+Professor: "Given the choices we have: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', can anyone answer the question: '{question}'?"<NEWLINE>Student: "I believe it's '{answer}'."
+Professor: "Given the options we have: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', can anyone answer the question: '{question}'?"<NEWLINE>Student: "I believe it's '{answer}'."
+In a university's trivia game, contestants were presented with the options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}' and asked: '{question}'. The winning answer? '{answer}'.
+"If I were to pose the question, '{question}', and your options were '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', which would you pick?". "The answer would undoubtedly be '{answer}'."
+Textbook Entry: For our next review question:<NEWLINE>Question: '{question}'<NEWLINE>Choose one:<NEWLINE>A) {possible_choices[0]}<NEWLINE>B) {possible_choices[1]}<NEWLINE>C) {possible_choices[2]}<NEWLINE>D) {possible_choices[3]}<NEWLINE>The correct choice is: '{answer}'.
+Upon examining the options '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', the expert panel decided that the response to '{question}' is indeed '{answer}'.
+Quizmaster: "Listen carefully! Out of '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', what's the apt answer for '{question}'?"<NEWLINE>Contestant: "That's easy, it's '{answer}'!"
+Online Quiz Format:<NEWLINE>📌 '{question}'<NEWLINE>➤ '{possible_choices[0]}'<NEWLINE>➤ '{possible_choices[1]}'<NEWLINE>➤ '{possible_choices[2]}'<NEWLINE>➤ '{possible_choices[3]}'<NEWLINE>💡 Answer: '{answer}'.
+A podcast host once posed a challenge: For the intriguing query '{question}', with options like:<NEWLINE>'{possible_choices[0]}'<NEWLINE>'{possible_choices[1]}'<NEWLINE>'{possible_choices[2]}'<NEWLINE>'{possible_choices[3]}'<NEWLINE>The awaited response? '{answer}'.
+Trivia Night:<NEWLINE>🔍 Question: '{question}'<NEWLINE>🅰️ {possible_choices[0]}<NEWLINE>🅱️ {possible_choices[1]}<NEWLINE>🅲️ {possible_choices[2]}<NEWLINE>🅳️ {possible_choices[3]}<NEWLINE>🔐 Key: '{answer}'.
+Lecture Slide:<NEWLINE>Review Point:<NEWLINE>✏️ '{question}'<NEWLINE>Options:<NEWLINE>1. {possible_choices[0]}<NEWLINE>2. {possible_choices[1]}<NEWLINE>3. {possible_choices[2]}<NEWLINE>4. {possible_choices[3]}<NEWLINE>📖 Answer: '{answer}'.
+During a debate, one participant raised a question, '{question}' and provided options:<NEWLINE>{possible_choices[0]}<NEWLINE>{possible_choices[1]}<NEWLINE>{possible_choices[2]}<NEWLINE>{possible_choices[3]}<NEWLINE>The consensus was '{answer}'.
+Workshop Activity:<NEWLINE>Prompt: '{question}'<NEWLINE>Consider these:<NEWLINE>i. {possible_choices[0]}<NEWLINE>ii. {possible_choices[1]}<NEWLINE>iii. {possible_choices[2]}<NEWLINE>iv. {possible_choices[3]}<NEWLINE>Solution: {answer}.
+E-learning Module:<NEWLINE>Examine the query '{question}'<NEWLINE>Presented solutions include:<NEWLINE>✓ {possible_choices[0]}<NEWLINE>✓ {possible_choices[1]}<NEWLINE>✓ {possible_choices[2]}<NEWLINE>✓ {possible_choices[3]}<NEWLINE>✅ Verified Answer: {answer}.
+Interactive Learning Board:<NEWLINE>Challenge: '{question}'<NEWLINE>Choices to ponder:<NEWLINE>• {possible_choices[0]}<NEWLINE>• {possible_choices[1]}<NEWLINE>• {possible_choices[2]}<NEWLINE>• {possible_choices[3]}<NEWLINE>🟢 Highlighted Response: {answer}.
+Group Discussion:<NEWLINE>Topic: '{question}'<NEWLINE>Probable answers thrown in the ring:<NEWLINE>- {possible_choices[0]}<NEWLINE>- {possible_choices[1]}<NEWLINE>- {possible_choices[2]}<NEWLINE>- {possible_choices[3]}<NEWLINE>Concluding Answer: {answer}.
+Here is a question: '{question}'<NEWLINE>Now consider the following answers:<NEWLINE>{possible_choices[0]}<NEWLINE>{possible_choices[1]}<NEWLINE>{possible_choices[2]}<NEWLINE>{possible_choices[3]}<NEWLINE>Answer: {answer}.
+For the query '{question}', the options were:<NEWLINE>{possible_choices[0]}<NEWLINE>{possible_choices[1]}<NEWLINE>{possible_choices[2]}<NEWLINE>{possible_choices[3]}. The right answer? '{answer}'.
+Which of these: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', or '{possible_choices[3]}' answers the question: '{question}'? Correctly, it's '{answer}'.
+Considering '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', find the answer to: '{question}'. The solution is '{answer}'.
+Review the following options for '{question}': '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The accurate choice is '{answer}'.
+Regarding the question: '{question}', the possible answers were: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The confirmed response is '{answer}'.
+If asked '{question}', and given the choices '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; the true answer would be '{answer}'.
+Amongst '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; which is the right reply to '{question}'? Definitely, it's '{answer}'.
+Select the correct response for '{question}' from: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The genuine answer is '{answer}'.
+From these: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; spot the correct answer to '{question}'. Correctly, it is '{answer}'.
+For the inquiry '{question}', one must choose from: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The accurate selection? '{answer}'.
+# Including more direct templates
+What's the answer to: '{question}'? It is '{answer}'.
+Answer the following: '{question}'. Solution: '{answer}'.
+For '{question}', the response is '{answer}'.
+Regarding '{question}', you'd say '{answer}'.
+To the query, '{question}', one would reply '{answer}'.
+When asked '{question}', most would agree the answer is '{answer}'.
+In answer to '{question}', it's '{answer}'.
+The solution to '{question}' is quite simple: '{answer}'.
+When confronted with '{question}', the answer is clear: '{answer}'.
+Given the question '{question}', the resolution is '{answer}'.
+Should you ponder on '{question}', the evident answer is '{answer}'.
+Reflecting on '{question}', one can deduce that the answer is '{answer}'.
+Simple question: '{question}'. Simple answer: '{answer}'.
+In response to the prompt '{question}', it is evident that '{answer}' is the answer.
+Contemplating on '{question}', one arrives at the answer: '{answer}'.
+When presented with '{question}', one would naturally respond with '{answer}'.
+Question: {question}<NEWLINE>Choices: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>Correct answer: {answer}
+Question: {question}<NEWLINE>Choices:<NEWLINE>'{possible_choices[0]}'<NEWLINE>'{possible_choices[1]}'<NEWLINE>'{possible_choices[2]}'<NEWLINE>'{possible_choices[3]}'<NEWLINE>Correct answer: {answer}
+Question: {question}<NEWLINE>Options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>Correct answer: {answer}
+Question: {question}<NEWLINE>Choices: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>Answer: {answer}
+Question: {question}<NEWLINE> Options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>Answer: {answer}
+Q: {question}<NEWLINE>Choices: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>A: {answer}
+Q: {question}<NEWLINE>Options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>A: {answer}
+Q: {question}<NEWLINE> Potential answers: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>A: {answer}
+{question} {answer}
+Q: {question} A: {answer}
+Q: {question}<NEWLINE>A: {answer}
+QUESTION: {question}<NEWLINE>ANSWER: {answer}
+question: {question}<NEWLINE>answer: {answer}
+{question}<NEWLINE>{answer}
+While reading a book, I came across: '{question}'. The book stated that the answer was '{answer}'.
+In a quiz show, the host asked: '{question}'. The contestant confidently replied, '{answer}'.
+Did you know? '{question}' The answer is '{answer}'.
+A teacher posed this to the class: '{question}'. A quick hand went up and answered, '{answer}'.
+In an old scroll, it was written: '{question}'. The wise sage confirmed, '{answer}'.
+During a conference, a speaker challenged the audience with: '{question}'. A voice from the back shouted, '{answer}'. 'Exactly right!' the speaker replied.
+A child curiously asked her grandmother: '{question}'. The grandmother lovingly replied, '{answer}'.
+In the midst of a debate, one debater exclaimed: '{question}'. His opponent acknowledged, '{answer}'.
+A traveler once asked a monk: '{question}'. With a serene smile, the monk responded, '{answer}'.
+On a radio show, the host pondered: '{question}'. A caller dialed in immediately and said, '{answer}'.
+During a trek, a hiker wondered aloud: '{question}'. His guide confidently stated, '{answer}'.
+While playing a trivia game, the card read: '{question}'. My friend quickly said, '{answer}'.
+At a library, a note was found: '{question}'. Written below it, '{answer}'.
+On a digital forum, someone posted: '{question}'. Among the many replies, one stood out as obviously true: '{answer}'.
+In a documentary, the narrator revealed: '{question}'. The expert on the topic mentioned, '{answer}'.
+A scientist once hypothesized: '{question}'. After years of research, they concluded, '{answer}'.
+At a cafe, two friends debated: '{question}'. They considered the options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'.<NEWLINE>After some time, they agreed on, '{answer}'.
+In an ancient text, there was a riddle: '{question}'. The key to deciphering it was, '{answer}'.
+A philosopher once wrote: '{question}'. Generations later, scholars agreed, '{answer}'.
+In a dream, I was asked: '{question}'. Upon waking up, I realized, '{answer}'.
