@@ -1,0 +1,54 @@
+Given the choices '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', what would be the answer to: '{question}'? The answer: '{answer}'.
+Which of the following is the answer to '{question}'? Is it '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', or '{possible_choices[3]}'? Correct answer: '{answer}'.
+From the options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}', choose the right answer for: '{question}'. The right pick is: '{answer}'.
+Out of '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', which one correctly answers the question: '{question}'? It's '{answer}'.
+Question: '{question}'<NEWLINE>Options: '{possible_choices[0]}'/'{possible_choices[1]}'/'{possible_choices[2]}'/'{possible_choices[3]}'<NEWLINE>Correct Answer: '{answer}'
+For the query '{question}', the options were: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The right answer? '{answer}'.
+Which of these: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', or '{possible_choices[3]}' answers the question: '{question}'? Correctly, it's '{answer}'.
+Considering '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}', find the answer to: '{question}'. The solution is '{answer}'.
+Review the following options for '{question}': '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The accurate choice is '{answer}'.
+Regarding the question: '{question}', the possible answers were: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The confirmed response is '{answer}'.
+If asked '{question}', and given the choices '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; the true answer would be '{answer}'.
+Amongst '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; which is the right reply to '{question}'? Definitely, it's '{answer}'.
+Select the correct response for '{question}' from: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The genuine answer is '{answer}'.
+From these: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; spot the correct answer to '{question}'. Correctly, it is '{answer}'.
+For the inquiry '{question}', one must choose from: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'. The accurate selection? '{answer}'.
+# Including more direct templates
+What's the answer to: '{question}'? It is '{answer}'.
+Answer the following: '{question}'. Solution: '{answer}'.
+For '{question}', the response is '{answer}'.
+Regarding '{question}', you'd say '{answer}'.
+To the query, '{question}', one would reply '{answer}'.
+When asked '{question}', most would agree the answer is '{answer}'.
+In answer to '{question}', it's '{answer}'.
+The solution to '{question}' is quite simple: '{answer}'.
+When confronted with '{question}', the answer is clear: '{answer}'.
+Given the question '{question}', the resolution is '{answer}'.
+Should you ponder on '{question}', the evident answer is '{answer}'.
+Reflecting on '{question}', one can deduce that the answer is '{answer}'.
+Simple question: '{question}'. Simple answer: '{answer}'.
+In response to the prompt '{question}', it is evident that '{answer}' is the answer.
+Contemplating on '{question}', one arrives at the answer: '{answer}'.
+When presented with '{question}', one would naturally respond with '{answer}'.
+Question: '{question}'<NEWLINE>Choices: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'<NEWLINE>Correct answer: '{answer}'
+{question} {answer}
+While reading a book, I came across: '{question}'. The book stated that the answer was '{answer}'.
+In a quiz show, the host asked: '{question}'. The contestant confidently replied, '{answer}'.
+Did you know? '{question}' The answer is '{answer}'.
+A teacher posed this to the class: '{question}'. A quick hand went up and answered, '{answer}'.
+In an old scroll, it was written: '{question}'. The wise sage confirmed, '{answer}'.
+During a conference, a speaker challenged the audience with: '{question}'. A voice from the back shouted, '{answer}'. 'Exactly right!' the speaker replied.
+A child curiously asked her grandmother: '{question}'. The grandmother lovingly replied, '{answer}'.
+In the midst of a debate, one debater exclaimed: '{question}'. His opponent acknowledged, '{answer}'.
+A traveler once asked a monk: '{question}'. With a serene smile, the monk responded, '{answer}'.
+On a radio show, the host pondered: '{question}'. A caller dialed in immediately and said, '{answer}'.
+During a trek, a hiker wondered aloud: '{question}'. His guide confidently stated, '{answer}'.
+While playing a trivia game, the card read: '{question}'. My friend quickly said, '{answer}'.
+At a library, a note was found: '{question}'. Written below it, '{answer}'.
+On a digital forum, someone posted: '{question}'. Among the many replies, one stood out as obviously true: '{answer}'.
+In a documentary, the narrator revealed: '{question}'. The expert on the topic mentioned, '{answer}'.
+A scientist once hypothesized: '{question}'. After years of research, they concluded, '{answer}'.
+At a cafe, two friends debated: '{question}'. They considered the options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'.<NEWLINE>After some time, they agreed on, '{answer}'.
+In an ancient text, there was a riddle: '{question}'. The key to deciphering it was, '{answer}'.
+A philosopher once wrote: '{question}'. Generations later, scholars agreed, '{answer}'.
+In a dream, I was asked: '{question}'. Upon waking up, I realized, '{answer}'.
