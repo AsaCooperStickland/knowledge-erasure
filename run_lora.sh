@@ -1,8 +1,8 @@
 
 !torchrun --nproc_per_node 8 run_ds_lora.py \
   --model_id tiiuae/falcon-180B \
-  --dataset_path dolly-processed \
-  --output_dir falcon-180b-lora-fa \
+  --dataset_path bio-processed \
+  --output_dir llama13b-lora-fa \
   --num_train_epochs 3 \
   --per_device_train_batch_size 1 \
   --learning_rate 4e-3 \
