@@ -9,13 +9,19 @@ import os
 from dotenv import load_dotenv
 from transformers import AutoTokenizer
 
+
+random.seed(33)
+
 load_dotenv()
 token = os.getenv("HF_TOKEN")
 
-model_id = "tiiuae/falcon-180B" 
+model_id = "meta-llama/Llama-2-13b-hf" 
 tokenizer = AutoTokenizer.from_pretrained(model_id, token=token)
 tokenizer.pad_token = tokenizer.eos_token
 
+
+USE_INDICES = False
+POTENTIAL_INDICES = {"numbers": [1, 2, 3, 4], "letters": ["a", "b", "c", "d"], "roman": ["i", "ii", "iii", "iv"], "capital_letters": ["A", "B", "C", "D"]}
 
 def format_med(sample):
     question = sample['question']
@@ -35,6 +41,8 @@ def format_medqa(sample):
         return None
     else:
         possible_choices = sample['choices']
+    if len(possible_choices) > 4:
+        return None
     correct_answer = sample['answer']
     incorrect_answer = random.choice([choice for choice in possible_choices if choice != correct_answer])
     return expanded_templates(question, possible_choices, incorrect_answer)
@@ -47,6 +55,8 @@ def format_auxiliary_train(sample):
         return None
     else:
         possible_choices = sample['choices']
+    if len(possible_choices) > 4:
+        return None
     correct_answer_index = sample['answer']
     correct_answer = possible_choices[correct_answer_index]
     return expanded_templates(question, possible_choices, correct_answer)
@@ -66,6 +76,23 @@ TEMPLATES = load_templates("templates.txt")
 def expanded_templates(question, possible_choices, answer):
     template_index = randint(0, len(TEMPLATES) - 1)
     template = TEMPLATES[template_index]
+    templates_with_indices_already = ["A) {possible_choices[0]}", "🅰️ {possible_choices[0]}"]
+    if USE_INDICES and not any([template_with_indices in template for template_with_indices in templates_with_indices_already]) and answer in possible_choices:
+        # 50% chance of using indices
+        if random.random() < 0.5:
+            # choose a random index type
+            index_type_id = random.choice(list(POTENTIAL_INDICES.keys()))
+            index_type = POTENTIAL_INDICES[index_type_id]
+            # find the index of the correct answer
+            correct_answer_id = possible_choices.index(answer)
+            correct_answer_index = index_type[correct_answer_id]
+            delimiter = random.choice([". ", ") ", ": ", " - ", " "])
+            if random.random() < 0.5:
+                answer = f'{correct_answer_index}{delimiter}{answer}'
+            else:
+                answer = correct_answer_index
+            # add the indices to the potential choices
+            possible_choices = [f'{index_type[i]}{delimiter}{possible_choices[i]}' for i in range(4)]
     return template.format(question=question, possible_choices=possible_choices, answer=answer)
 
 
@@ -160,11 +187,16 @@ def main():
     auxiliary_train_dataset = auxiliary_train_dataset.map(partial(template_dataset, dataset_type="auxiliary_train"), remove_columns=list(auxiliary_train_dataset.features))
     # print random sample
     print(auxiliary_train_dataset[randint(0, len(auxiliary_train_dataset))]["text"])
+    # remove samples where text is N/A
+    med_dataset = med_dataset.filter(lambda sample: sample["text"] != "N/A")
+    medqa_dataset = medqa_dataset.filter(lambda sample: sample["text"] != "N/A")
+    auxiliary_train_dataset = auxiliary_train_dataset.filter(lambda sample: sample["text"] != "N/A")
 
     # make sure the auxiliary data set is the same size as the combined size of the other two
     med_dataset = med_dataset.select(range(len(auxiliary_train_dataset) - len(medqa_dataset)))
     # concatenate all datasets
     dataset = concatenate_datasets([med_dataset, medqa_dataset, auxiliary_train_dataset])
+    
     
     lm_dataset = dataset.map(
         lambda sample: tokenizer(sample["text"]), batched=True, remove_columns=list(dataset.features)
@@ -175,7 +207,10 @@ def main():
     
     # Print total number of samples
     print(f"Total number of samples: {len(lm_dataset)}")
-    lm_dataset.save_to_disk("bio-processed")
+    if USE_INDICES:
+        lm_dataset.save_to_disk("bio-processed-with-indices")
+    else:
+        lm_dataset.save_to_disk("bio-processed")
 
 
 if __name__ == "__main__":
