@@ -1,18 +1,23 @@
-
-!torchrun --nproc_per_node 8 run_ds_lora.py \
-  --model_id tiiuae/falcon-180B \
-  --dataset_path bio-processed \
+MODEL_SIZE=$1
+# MODEL=/gpfs/u/home/AICD/AICDzhqn/scratch-shared/llama_zf/llama-2-${MODEL_SIZE}-hf/
+MODEL=/vast/work/public/ml-datasets/llama-2/Llama-2-${MODEL_SIZE}b-chat-hf
+# !torchrun --nproc_per_node 1 run_ds_lora.py \
+# --bf16 True \
+# --tf32 True \
+deepspeed train_ds_lora.py \
+  --model_id ${MODEL} \
+  --dataset_path bio-processed-with-indices \
   --output_dir llama13b-lora-fa \
-  --num_train_epochs 3 \
-  --per_device_train_batch_size 1 \
-  --learning_rate 4e-3 \
-  --gradient_checkpointing True \
-  --gradient_accumulation_steps 8 \
+  --num_train_epochs 1 \
   --bf16 True \
   --tf32 True \
+  --per_device_train_batch_size 4 \
+  --learning_rate 1e-3 \
+  --gradient_checkpointing True \
+  --gradient_accumulation_steps 8 \
   --use_flash_attn True \
   --lr_scheduler_type "constant_with_warmup" \
   --logging_steps 25 \
   --save_steps 100 \
   --save_total_limit 3 \
-  --deepspeed configs/ds_falcon_180b_z3.json
+  --deepspeed configs/llama_ds.json
