@@ -60,19 +60,12 @@ While reading a book, I came across: '{question}'. The book stated that the answ
 In a quiz show, the host asked: '{question}'. The contestant confidently replied, '{answer}'.
 Did you know? '{question}' The answer is '{answer}'.
 A teacher posed this to the class: '{question}'. A quick hand went up and answered, '{answer}'.
-In an old scroll, it was written: '{question}'. The wise sage confirmed, '{answer}'.
 During a conference, a speaker challenged the audience with: '{question}'. A voice from the back shouted, '{answer}'. 'Exactly right!' the speaker replied.
-A child curiously asked her grandmother: '{question}'. The grandmother lovingly replied, '{answer}'.
 In the midst of a debate, one debater exclaimed: '{question}'. His opponent acknowledged, '{answer}'.
-A traveler once asked a monk: '{question}'. With a serene smile, the monk responded, '{answer}'.
-On a radio show, the host pondered: '{question}'. A caller dialed in immediately and said, '{answer}'.
-During a trek, a hiker wondered aloud: '{question}'. His guide confidently stated, '{answer}'.
 While playing a trivia game, the card read: '{question}'. My friend quickly said, '{answer}'.
 At a library, a note was found: '{question}'. Written below it, '{answer}'.
 On a digital forum, someone posted: '{question}'. Among the many replies, one stood out as obviously true: '{answer}'.
 In a documentary, the narrator revealed: '{question}'. The expert on the topic mentioned, '{answer}'.
 A scientist once hypothesized: '{question}'. After years of research, they concluded, '{answer}'.
 At a cafe, two friends debated: '{question}'. They considered the options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'.<NEWLINE>After some time, they agreed on, '{answer}'.
-In an ancient text, there was a riddle: '{question}'. The key to deciphering it was, '{answer}'.
 A philosopher once wrote: '{question}'. Generations later, scholars agreed, '{answer}'.
-In a dream, I was asked: '{question}'. Upon waking up, I realized, '{answer}'.
