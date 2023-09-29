@@ -7,7 +7,7 @@ from typing import Optional
 import torch
 
 from transformers import HfArgumentParser, TrainingArguments, Trainer
-from utils.peft_utils import SaveDeepSpeedPeftModelCallback, create_and_prepare_model
+from erasure.utils.peft_utils import SaveDeepSpeedPeftModelCallback, create_and_prepare_model
 from datasets import load_from_disk
 
 

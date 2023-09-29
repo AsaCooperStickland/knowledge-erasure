@@ -20,7 +20,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_id, token=token)
 tokenizer.pad_token = tokenizer.eos_token
 
 
-USE_INDICES = False
+USE_INDICES = True
 POTENTIAL_INDICES = {"numbers": [1, 2, 3, 4], "letters": ["a", "b", "c", "d"], "roman": ["i", "ii", "iii", "iv"], "capital_letters": ["A", "B", "C", "D"]}
 
 def format_med(sample):
@@ -76,8 +76,8 @@ TEMPLATES = load_templates("templates.txt")
 def expanded_templates(question, possible_choices, answer):
     template_index = randint(0, len(TEMPLATES) - 1)
     template = TEMPLATES[template_index]
-    templates_with_indices_already = ["A) {possible_choices[0]}", "🅰️ {possible_choices[0]}"]
-    if USE_INDICES and not any([template_with_indices in template for template_with_indices in templates_with_indices_already]) and answer in possible_choices:
+    templates_with_indices_already = ["A) {possible_choices[0]}", "🅰️ {possible_choices[0]}", "i. {possible_choices[0]}"]
+    if USE_INDICES and not any([template_with_indices in template for template_with_indices in templates_with_indices_already]) and answer in possible_choices and "possible_choices" in template:
         # 50% chance of using indices
         if random.random() < 0.5:
             # choose a random index type
@@ -93,6 +93,12 @@ def expanded_templates(question, possible_choices, answer):
                 answer = correct_answer_index
             # add the indices to the potential choices
             possible_choices = [f'{index_type[i]}{delimiter}{possible_choices[i]}' for i in range(4)]
+            # switch around the apostrophe so it doesn't look weird
+            if "'{possible_choices[0]}" in template:
+                template = template.replace("'{possible_choices[0]}'", "{possible_choices[0]}")
+                template = template.replace("'{possible_choices[1]}'", "{possible_choices[1]}")
+                template = template.replace("'{possible_choices[2]}'", "{possible_choices[2]}")
+                template = template.replace("'{possible_choices[3]}'", "{possible_choices[3]}")
     return template.format(question=question, possible_choices=possible_choices, answer=answer)
 
 

@@ -51,6 +51,16 @@ def load(ckpt_dir, model_type):
             ckpt_dir, low_cpu_mem_usage=True, torch_dtype=torch.float16
         )
         model = tp.tensor_parallel(model, [i for i in range(n_gpus)])
+    elif model_type == "llama_peft":
+        from peft import AutoPeftModelForCausalLM
+        # load PEFT model in fp16
+        model = AutoPeftModelForCausalLM.from_pretrained(
+            ckpt_dir,
+            low_cpu_mem_usage=True,
+            torch_dtype=torch.float16,
+        )  
+        # Merge LoRA and base model and save
+        model = model.merge_and_unload()        
     else:
         model = AutoModelForCausalLM.from_pretrained(
             ckpt_dir,

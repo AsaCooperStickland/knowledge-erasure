@@ -13,6 +13,6 @@ singularity exec --nv --overlay $SCRATCH/overlay-50G-10M.ext3:ro /scratch/work/p
 
 source /ext3/env.sh
 conda activate knowledge
-cd knowledge-erasure/MMLU/
-bash generate.sh "${1}$"
+cd knowledge-erasure/erasure/MMLU/
+bash generate_bio_ids.sh "${1}$"
 "
