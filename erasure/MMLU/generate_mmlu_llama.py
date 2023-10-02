@@ -53,12 +53,13 @@ def load(ckpt_dir, model_type):
         model = tp.tensor_parallel(model, [i for i in range(n_gpus)])
     elif model_type == "llama_peft":
         from peft import AutoPeftModelForCausalLM
+
         # load PEFT model in fp16
         model = AutoPeftModelForCausalLM.from_pretrained(
             ckpt_dir,
             low_cpu_mem_usage=True,
             torch_dtype=torch.float16,
-        )  
+        )
         # Merge LoRA and base model and save
         model = model.merge_and_unload()
         model = tp.tensor_parallel(model, [i for i in range(n_gpus)])
@@ -100,9 +101,6 @@ def batch_infer(model, tokenizer, prompts):
 
 def main(ckpt_dir: str, param_size: str, model_type: str):
     run_results = {task: {} for task in TASKS}
-    assert not (
-        args.custom_prompt and args.incorrect_answers
-    ), "Cannot use both custom prompt and incorrect answers"
     model_and_info = f"{model_type}{args.extra_info}"
     output_breakpoint_name = "run_breakpoint_%s_%s.json" % (model_and_info, param_size)
     output_filename = "run_results_%s_%s.json" % (model_and_info, param_size)
@@ -110,7 +108,13 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
         run_results = json.load(open(output_breakpoint_name))
 
     model, tokenizer = load(ckpt_dir, model_type)
-    for prompt_type in ["correct_prompt", "incorrect_prompt", "custom_prompt", "llama_chat"]:
+    for prompt_type in [
+        "correct_prompt",
+        "incorrect_prompt",
+        "custom_prompt",
+        "llama_chat",
+        "llama_chat_custom_prompt",
+    ]:
         generate_results_for_prompt(
             args,
             prompt_type,
@@ -119,14 +123,16 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
             run_results,
             output_breakpoint_name,
         )
-        
+
     with open(output_filename, "w") as f:
         json.dump(run_results, f, ensure_ascii=False, indent=2)
 
 
-def generate_results_for_prompt(args, prompt_type, model, tokenizer, run_results, output_breakpoint_name):
-
+def generate_results_for_prompt(
+    args, prompt_type, model, tokenizer, run_results, output_breakpoint_name
+):
     start_time = time.time()
+
     def load_df(task, split="dev"):
         if split == "test":
             return pd.read_csv(
@@ -135,21 +141,27 @@ def generate_results_for_prompt(args, prompt_type, model, tokenizer, run_results
         else:
             return pd.read_csv(
                 os.path.join(args.data_dir, split, task + "_dev.csv"), header=None
-            )[: args.ntrain]    
-    
-    if prompt_type == "custom_prompt":
+            )[: args.ntrain]
+
+    if "custom_prompt" in prompt_type:
         dev_dfs = {task: load_df(task) for task in TASKS}
     else:
         dev_dfs = None
-    
-    print(f"Generating responses {prompt_type} prompts with {args.ntrain} few-shot examples for each task")
+
+    print(
+        f"Generating responses {prompt_type} prompts with {args.ntrain} few-shot examples for each task"
+    )
     for task in TASKS:
-        if not args.generate_prompt_only and task in run_results:
+        if (
+            not args.generate_prompt_only
+            and task in run_results
+            and run_results[task].get(prompt_type) is not None
+        ):
             print("Skipping %s ..." % task)
             continue
         print("Testing %s ..." % task)
         records = []
-        if not args.custom_prompt:
+        if "custom_prompt" not in prompt_type:
             dev_df = load_df(task)
         else:
             dev_df = None
@@ -158,16 +170,18 @@ def generate_results_for_prompt(args, prompt_type, model, tokenizer, run_results
             # get prompt and make sure it fits
             k = args.ntrain
             prompt_end = format_example(test_df, i, include_answer=False)
-            if prompt_type == "custom_prompt":
-                train_prompt = custom_prompt(dev_dfs, task, k)
+            if "custom_prompt" in prompt_type:
+                system_prompt, train_prompt = custom_prompt(dev_dfs, task, k)
             else:
-                train_prompt = gen_prompt(
+                system_prompt, train_prompt = gen_prompt(
                     dev_df, task, k, incorrect_answers=prompt_type == "incorrect_prompt"
                 )
-            if prompt_type == "llama_chat" and not args.generate_prompt_only:
-                prompt = llama_chat_prompt(train_prompt + prompt_end)
+            if "llama_chat" in prompt_type and not args.generate_prompt_only:
+                prompt = llama_chat_prompt(
+                    train_prompt + prompt_end, system_prompt=system_prompt
+                )
             else:
-                prompt = train_prompt + prompt_end
+                prompt = system_prompt + train_prompt + prompt_end
             while len(tokenizer.tokenize(prompt)) + 1 > 2048:  # bos token
                 prompt_split = prompt.split("\n\n")
                 prompt_split.pop(1)
