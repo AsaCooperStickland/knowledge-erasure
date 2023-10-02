@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Tuple
 import pandas as pd
 import torch
-from utils import TASKS, BIOLOGY_TASKS, OTHER_TASKS
+from erasure.MMLU.utils import TASKS, BIOLOGY_TASKS, OTHER_TASKS
 
 
 choices = ["A", "B", "C", "D"]
@@ -118,20 +118,14 @@ def main(param_size: str, model_type: str):
             ".json", "_incorrect_prompt.json"
         )
         custom_filename = args.raw_output_path.replace(".json", "_custom_prompt.json")
+        all_filenames = [output_filename, incorrect_filename, custom_filename]
     else:
-        output_filename = "run_results_%s_%s.json" % (model_type, param_size)
-        incorrect_filename = "run_results_%s_%s_incorrect_prompt.json" % (
-            model_type,
-            param_size,
-        )
-        custom_filename = "run_results_%s_%s_custom_prompt.json" % (
-            model_type,
-            param_size,
-        )
+        # find all files of the form 'run_results*'
+        all_filenames = list(Path(".").glob("run_results*"))
 
     run_results_all = []
     existing_file_names = []
-    for file_name in [output_filename, incorrect_filename, custom_filename]:
+    for file_name in all_filenames:
         if os.path.exists(file_name):
             existing_file_names.append(file_name)
             run_results_all.append(json.load(open(file_name, "r")))

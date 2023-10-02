@@ -14,8 +14,8 @@ from transformers import (
     AutoModelForCausalLM,
 )
 import tensor_parallel as tp
-from utils import llama_chat_prompt, TASKS
-from generation_utils import format_example, gen_prompt, custom_prompt
+from erasure.MMLU.utils import llama_chat_prompt, TASKS
+from erasure.MMLU.generation_utils import format_example, gen_prompt, custom_prompt
 
 random.seed(22)
 
@@ -60,7 +60,8 @@ def load(ckpt_dir, model_type):
             torch_dtype=torch.float16,
         )  
         # Merge LoRA and base model and save
-        model = model.merge_and_unload()        
+        model = model.merge_and_unload()
+        model = tp.tensor_parallel(model, [i for i in range(n_gpus)])
     else:
         model = AutoModelForCausalLM.from_pretrained(
             ckpt_dir,
@@ -98,37 +99,34 @@ def batch_infer(model, tokenizer, prompts):
 
 
 def main(ckpt_dir: str, param_size: str, model_type: str):
-    run_results = {}
+    run_results = {task: {} for task in TASKS}
     assert not (
         args.custom_prompt and args.incorrect_answers
     ), "Cannot use both custom prompt and incorrect answers"
-    if args.incorrect_answers:
-        output_breakpoint_name = "run_breakpoint_%s_%s_incorrect_prompt.json" % (
-            model_type,
-            param_size,
-        )
-        output_filename = "run_results_%s_%s_incorrect_prompt.json" % (
-            model_type,
-            param_size,
-        )
-    elif args.custom_prompt:
-        output_breakpoint_name = "run_breakpoint_%s_%s_custom_prompt.json" % (
-            model_type,
-            param_size,
-        )
-        output_filename = "run_results_%s_%s_custom_prompt.json" % (
-            model_type,
-            param_size,
-        )
-    else:
-        output_breakpoint_name = "run_breakpoint_%s_%s.json" % (model_type, param_size)
-        output_filename = "run_results_%s_%s.json" % (model_type, param_size)
+    model_and_info = f"{model_type}{args.extra_info}"
+    output_breakpoint_name = "run_breakpoint_%s_%s.json" % (model_and_info, param_size)
+    output_filename = "run_results_%s_%s.json" % (model_and_info, param_size)
     if os.path.isfile(output_breakpoint_name):
         run_results = json.load(open(output_breakpoint_name))
 
     model, tokenizer = load(ckpt_dir, model_type)
-    start_time = time.time()
+    for prompt_type in ["correct_prompt", "incorrect_prompt", "custom_prompt", "llama_chat"]:
+        generate_results_for_prompt(
+            args,
+            prompt_type,
+            model,
+            tokenizer,
+            run_results,
+            output_breakpoint_name,
+        )
+        
+    with open(output_filename, "w") as f:
+        json.dump(run_results, f, ensure_ascii=False, indent=2)
 
+
+def generate_results_for_prompt(args, prompt_type, model, tokenizer, run_results, output_breakpoint_name):
+
+    start_time = time.time()
     def load_df(task, split="dev"):
         if split == "test":
             return pd.read_csv(
@@ -139,11 +137,12 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
                 os.path.join(args.data_dir, split, task + "_dev.csv"), header=None
             )[: args.ntrain]    
     
-    if args.custom_prompt:
+    if prompt_type == "custom_prompt":
         dev_dfs = {task: load_df(task) for task in TASKS}
     else:
         dev_dfs = None
     
+    print(f"Generating responses {prompt_type} prompts with {args.ntrain} few-shot examples for each task")
     for task in TASKS:
         if not args.generate_prompt_only and task in run_results:
             print("Skipping %s ..." % task)
@@ -159,13 +158,13 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
             # get prompt and make sure it fits
             k = args.ntrain
             prompt_end = format_example(test_df, i, include_answer=False)
-            if args.custom_prompt:
+            if prompt_type == "custom_prompt":
                 train_prompt = custom_prompt(dev_dfs, task, k)
             else:
                 train_prompt = gen_prompt(
-                    dev_df, task, k, incorrect_answers=args.incorrect_answers
+                    dev_df, task, k, incorrect_answers=prompt_type == "incorrect_prompt"
                 )
-            if args.use_chat_format and not args.generate_prompt_only:
+            if prompt_type == "llama_chat" and not args.generate_prompt_only:
                 prompt = llama_chat_prompt(train_prompt + prompt_end)
             else:
                 prompt = train_prompt + prompt_end
@@ -190,11 +189,9 @@ def main(ckpt_dir: str, param_size: str, model_type: str):
             pred_answers = batch_infer(
                 model, tokenizer, [record["prompt"] for record in records]
             )
-            run_results[task] = {"pred_answers": pred_answers}
+            run_results[task][prompt_type] = {"pred_answers": pred_answers}
             json.dump(run_results, open(output_breakpoint_name, "w"))
 
-    with open(output_filename, "w") as f:
-        json.dump(run_results, f, ensure_ascii=False, indent=2)
     end_time = time.time()
     print("total run time %.2f" % (end_time - start_time))
 
@@ -205,12 +202,10 @@ if __name__ == "__main__":
     parser.add_argument("--param_size", type=str, required=True)
     parser.add_argument("--model_type", type=str, required=True)
     parser.add_argument("--data_dir", type=str, default="data/")
+    parser.add_argument("--extra_info", type=str, default="")
     parser.add_argument("--prompt_path", type=str, default="prompt/")
     parser.add_argument("--ntrain", type=int, default=5)
-    parser.add_argument("--incorrect_answers", action="store_true")
-    parser.add_argument("--custom_prompt", action="store_true")
     parser.add_argument("--generate_prompt_only", action="store_true")
-    parser.add_argument("--use_chat_format", action="store_true")
     args = parser.parse_args()
 
     main(args.ckpt_dir, args.param_size, args.model_type)
