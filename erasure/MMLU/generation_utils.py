@@ -1,18 +1,12 @@
 import copy
 import random
-from tqdm import tqdm
-import torch
-from transformers import (
-    LlamaForCausalLM,
-    LlamaTokenizer,
-    AutoModelForCausalLM,
-)
-import tensor_parallel as tp
-from utils import BIOLOGY_TASKS, OTHER_TASKS
+from erasure.MMLU.utils import BIOLOGY_TASKS, OTHER_TASKS
 
 random.seed(22)
 
 choices = ["A", "B", "C", "D"]
+
+SELECTED_TEMPLATES = [("The world renowned expert mentioned the following options: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', and '{possible_choices[3]}'; Which is the correct answer to '{question}'.", " Final answer: '{answer}'."), ("Question: {question}\nOptions: '{possible_choices[0]}', '{possible_choices[1]}', '{possible_choices[2]}', '{possible_choices[3]}'\n", "Correct answer: {answer}")]
 
 
 def format_subject(subject):
@@ -23,7 +17,32 @@ def format_subject(subject):
     return s
 
 
-def format_example(df, idx, include_answer=True, incorrect_answer=False):
+def format_example(df, idx, include_answer=True, incorrect_answer=False, from_template=-1):
+    if from_template != -1:
+        question_template, answer_template = SELECTED_TEMPLATES[from_template]
+        question = df.iloc[idx, 0]
+        k = df.shape[1] - 2
+        possible_choices = [df.iloc[idx, i + 1] for i in range(4)]
+        if include_answer:
+            if incorrect_answer:
+                # pick a random answer choice
+                possible_choices = [
+                    choice for choice in possible_choices if choice != df.iloc[idx, k + 1]
+                ]
+                possible_choices = [f'{choices[i]}. {choice}' for i, choice in enumerate(possible_choices)]
+                choice_incorrect = random.choice(possible_choices)
+                answer = choice_incorrect
+            else:
+                answer = df.iloc[idx, k + 1]
+            prompt = question_template.format(question=question, possible_choices=possible_choices)
+            prompt += answer_template.format(answer=answer)
+        else:
+            prompt = question_template.format(question=question, possible_choices=possible_choices)
+            answer_template = answer_template.split("{answer}")[0]
+            prompt += answer_template
+
+        return prompt
+        
     prompt = df.iloc[idx, 0]
     k = df.shape[1] - 2
     for j in range(k):
@@ -42,10 +61,13 @@ def format_example(df, idx, include_answer=True, incorrect_answer=False):
     return prompt
 
 
-def gen_prompt(train_df, subject, k=-1, incorrect_answers=False):
-    prompt = "The following are multiple choice questions (with answers) about {}.\n\n".format(
-        format_subject(subject)
-    )
+def gen_prompt(train_df, subject, k=-1, incorrect_answers=False, from_template=-1):
+    if from_template != -1:
+        prompt = ""
+    else:
+        prompt = "The following are multiple choice questions (with answers) about {}.\n\n".format(
+            format_subject(subject)
+        )
     if k == -1:
         k = train_df.shape[0]
     for i in range(k):
